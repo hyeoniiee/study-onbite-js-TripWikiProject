@@ -1,8 +1,9 @@
+//COMPONENTS
 import Header from "./components/Header.js";
 import RegionList from "./components/RegionList.js";
 import CityList from "./components/CityList.js";
 import CityDetail from "./components/CityDetail.js";
-
+//API
 import { request, requestCityDetail } from "./components/api.js";
 
 export default function App($app) {
@@ -23,8 +24,8 @@ export default function App($app) {
   this.state = {
     startIdx: 0,
     sortBy: getSortBy(),
+    region: window.location.pathname.replace("/", ""),
     searchWord: getSearchWord(),
-    region: "",
     cities: "",
     currentPage: window.location.pathname,
   };
@@ -141,14 +142,10 @@ export default function App($app) {
     }
   };
 
-  this.setState = (newState) => {
-    this.state = newState;
-    render();
-  };
-
   const render = async () => {
     const path = this.state.currentPage;
     $app.innerHTML = "";
+    // 상세 페이지로 이동
     if (path.startsWith("/city/")) {
       const cityId = path.split("/city/")[1];
       renderHeader();
@@ -160,10 +157,36 @@ export default function App($app) {
     }
   };
 
+  this.setState = (newState) => {
+    this.state = newState;
+    render();
+  };
+
+  const init = async () => {
+    const path = this.state.currentPage;
+    // 메인 페이지
+    if (!path.startsWith("/city/")) {
+      const cities = await request(
+        this.state.startIdx,
+        this.state.region,
+        this.state.sortBy,
+        this.state.searchWord
+      );
+      this.setState({
+        ...this.state,
+        cities: cities,
+      });
+    } //상세 페이지
+    else {
+      render();
+    }
+  };
+
   window.addEventListener("popstate", async () => {
     const urlPath = window.location.pathname;
 
     const prevRegion = urlPath.replace("/", "");
+    const prevPage = urlPath;
     const prevSortBy = getSortBy();
     const prevSearchWord = getSearchWord();
     const prevStartIdx = 0;
@@ -179,29 +202,11 @@ export default function App($app) {
       startIdx: prevStartIdx,
       sortBy: prevSortBy,
       region: prevRegion,
+      currentPage: prevPage,
       searchWord: prevSearchWord,
       cities: prevCities,
-      currentPage: urlPath,
     });
   });
-
-  const init = async () => {
-    const path = this.state.currentPage;
-    if (!path.startsWith("/city/")) {
-      const cities = await request(
-        this.state.startIdx,
-        this.state.region,
-        this.state.sortBy,
-        this.state.searchWord
-      );
-      this.setState({
-        ...this.state,
-        cities: cities,
-      });
-    } else {
-      render();
-    }
-  };
 
   init();
 }

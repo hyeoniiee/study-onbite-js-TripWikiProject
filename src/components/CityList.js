@@ -1,8 +1,8 @@
 export default function CityList({
   $app,
   initialState,
-  handleLoadMore,
   handleItemClick,
+  handleLoadMore,
 }) {
   this.state = initialState;
   this.$target = document.createElement("div");
@@ -18,11 +18,12 @@ export default function CityList({
     if (this.state) {
       this.state.cities.forEach((elm) => {
         temp += `
-        <div class = "city-item" id=${elm.id}>
-          <img src=${elm.image}></image>
-          <div class="city-item-info">${elm.city}, ${elm.country}</div>
-          <div class="city-item-score">⭐️ ${elm.total}</div>
-        </div>`;
+                  <div class="city-item" id=${elm.id}>
+                      <img src=${elm.image}></img>
+                      <div class="city-item-info">${elm.city}, ${elm.country}</div>
+                      <div class="city-item-score">⭐️ ${elm.total}</div>
+                  </div>
+             `;
       });
       temp += `</div>`;
     }
@@ -40,7 +41,7 @@ export default function CityList({
     if (!this.state.isEnd) {
       const $loadMoreButton = document.createElement("button");
       $loadMoreButton.className = "add-items-btn";
-      $loadMoreButton.textContent = "+더보기";
+      $loadMoreButton.textContent = "+ 더보기";
       this.$target.appendChild($loadMoreButton);
 
       $loadMoreButton.addEventListener("click", () => {

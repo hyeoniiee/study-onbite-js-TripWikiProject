@@ -6,7 +6,6 @@ export default function CityDetail({ $app, initialState }) {
   $app.appendChild(this.$target);
 
   const getScoreColor = (score) => {
-    let scoreNumber = parseInt(score);
     if (score >= 4) return "green";
     if (score >= 3) return "yellow";
     return "red";
