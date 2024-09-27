@@ -26,12 +26,13 @@ export default function App($app) {
     searchWord: getSearchWord(),
     region: "",
     cities: "",
+    currentPage: window.location.pathname,
   };
 
   const header = new Header({
     $app,
     initialState: {
-      currentPage: this.state.currentPage,
+      //currentPage: this.state.currentPage,
       sortBy: this.state.sortBy,
       searchWord: this.state.searchWord,
     },
@@ -58,6 +59,7 @@ export default function App($app) {
         cities: cities,
       });
     },
+
     handleSearch: async (searchWord) => {
       history.pushState(
         null,
@@ -92,7 +94,6 @@ export default function App($app) {
         region: region,
         cities: cities,
         searchWord: "",
-        currentPage: `/${region}`,
       });
     },
   });
@@ -132,24 +133,10 @@ export default function App($app) {
     regionList.setState(this.state.region);
   };
 
-  const init = async () => {
-    const cities = await request(
-      this.state.startIdx,
-      this.state.region,
-      this.state.sortBy,
-      this.state.searchWord
-    );
-    this.setState({
-      ...this.state,
-      cities: cities,
-    });
-  };
-
   window.addEventListener("popstate", async () => {
     const urlPath = window.location.pathname;
 
     const prevRegion = urlPath.replace("/", "");
-    const prevPage = urlPath;
     const prevSortBy = getSortBy();
     const prevSearchWord = getSearchWord();
     const prevStartIdx = 0;
@@ -165,11 +152,23 @@ export default function App($app) {
       startIdx: prevStartIdx,
       sortBy: prevSortBy,
       region: prevRegion,
-      currentPage: prevPage,
       searchWord: prevSearchWord,
       cities: prevCities,
     });
   });
+
+  const init = async () => {
+    const cities = await request(
+      this.state.startIdx,
+      this.state.region,
+      this.state.sortBy,
+      this.state.searchWord
+    );
+    this.setState({
+      ...this.state,
+      cities: cities,
+    });
+  };
 
   init();
 }
